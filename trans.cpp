@@ -196,6 +196,8 @@ static Matrix4 g_skyRbt = Matrix4::makeTranslation(Cvec3(0.0, 0.25, 4.0));
 static Matrix4 g_objectRbt[2] = {Matrix4::makeTranslation(Cvec3(-1,0,0)), Matrix4::makeTranslation(Cvec3(1, 0, 0))};  // 2 objects are now defined
 
 static Cvec3f g_objectColors[1] = {Cvec3f(1, 0, 0)};
+static int currentFrame = 0;
+
 
 ///////////////// END OF G L O B A L S //////////////////////////////////////////////////
 
@@ -261,9 +263,26 @@ static void drawStuff() {
   const Matrix4 projmat = makeProjectionMatrix();
   sendProjectionMatrix(curSS, projmat);
 
-  // use the skyRbt as the eyeRbt
-  const Matrix4 eyeRbt = g_skyRbt;
-  const Matrix4 invEyeRbt = inv(eyeRbt);
+  Matrix4 eyeRbt;
+  Matrix4 invEyeRbt;
+
+  switch (currentFrame) {
+  case 0:
+    // use the skyRbt as the eyeRbt
+    eyeRbt = g_skyRbt;
+    invEyeRbt = inv(eyeRbt);
+    break;
+  case 1:
+    // use cube 1 as the eyeRbt
+    eyeRbt = g_objectRbt[0];
+    invEyeRbt = inv(eyeRbt);
+    break;
+  case 2:
+    // use cube 2 as the eyeRbt
+    eyeRbt = g_objectRbt[1];
+    invEyeRbt = inv(eyeRbt);
+    break;
+  }
 
   // draw ground
   // ===========
@@ -353,6 +372,7 @@ static void mouse(const int button, const int state, const int x, const int y) {
 
 
 static void keyboard(const unsigned char key, const int x, const int y) {
+  cout << "Keyboard() called." << endl;
   switch (key) {
   case 27:
     exit(0);                                  // ESC
@@ -373,7 +393,17 @@ static void keyboard(const unsigned char key, const int x, const int y) {
     writePpmScreenshot(g_windowWidth, g_windowHeight, "out.ppm");
     cout << "Screenshot written to out.ppm." << endl;
     break;
+  case 'v':
+    if (currentFrame < 2) {
+       currentFrame++;
+    }
+    else {
+      currentFrame = 0;
+    }
+    cout << "Current Frame: " << currentFrame << endl;
+    break;
   }
+
   glutPostRedisplay();
 }
 
