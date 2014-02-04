@@ -108,7 +108,7 @@ static const char * const g_shaderFilesGl2[2] =
 
 static shared_ptr<ShaderState>  g_shaderState; // our global shader state
 
-static shared_ptr<GlTexture> g_tex0, g_tex1; // our global texture instance
+static shared_ptr<GlTexture> g_tex0, g_tex1, g_tex2; // our global texture instance
 
 // --------- Geometry
 
@@ -193,7 +193,8 @@ static shared_ptr<Geometry> g_ground, g_cube;
 // --------- Scene
 
 static Matrix4 g_skyRbt = Matrix4::makeTranslation(Cvec3(0.0, 0.25, 4.0));
-static Matrix4 g_objectRbt[1] = {Matrix4::makeTranslation(Cvec3(0,0,0))};  // currently only 1 obj is defined
+static Matrix4 g_objectRbt[2] = {Matrix4::makeTranslation(Cvec3(-1,0,0)), Matrix4::makeTranslation(Cvec3(1, 0, 0))};  // 2 objects are now defined
+
 static Cvec3f g_objectColors[1] = {Cvec3f(1, 0, 0)};
 
 ///////////////// END OF G L O B A L S //////////////////////////////////////////////////
@@ -280,6 +281,13 @@ static void drawStuff() {
   sendModelViewMatrix(curSS, MVM);
   safe_glUniform3f(curSS.h_uColor, g_objectColors[0][0], g_objectColors[0][1], g_objectColors[0][2]);
   safe_glUniform1i(curSS.h_uTexUnit0, 1); // texture unit 1 for cube
+  g_cube->draw(curSS);
+
+
+  MVM = invEyeRbt * g_objectRbt[1];
+  sendModelViewMatrix(curSS, MVM);
+  safe_glUniform3f(curSS.h_uColor, 0, 0, 0);
+  safe_glUniform1i(curSS.h_uTexUnit0, 2); // texture unit 2 for cube
   g_cube->draw(curSS);
 }
 
@@ -424,9 +432,11 @@ static void loadTexture(GLuint texHandle, const char *ppmFilename) {
 static void initTextures() {
   g_tex0.reset(new GlTexture());
   g_tex1.reset(new GlTexture());
+  g_tex2.reset(new GlTexture());
 
   loadTexture(*g_tex0, "checker256.ppm");
   loadTexture(*g_tex1, "roughbricks.ppm");
+  loadTexture(*g_tex2, "crazycheckers.ppm");
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, *g_tex0);
@@ -441,6 +451,14 @@ static void initTextures() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+  glActiveTexture(GL_TEXTURE2);
+  glBindTexture(GL_TEXTURE_2D, *g_tex2);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
 }
 
 int main(int argc, char * argv[]) {
