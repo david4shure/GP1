@@ -197,6 +197,7 @@ static Matrix4 g_objectRbt[2] = {Matrix4::makeTranslation(Cvec3(-1,0,0)), Matrix
 
 static Cvec3f g_objectColors[1] = {Cvec3f(1, 0, 0)};
 static int currentFrame = 0;
+static int manObject = 1;
 
 
 ///////////////// END OF G L O B A L S //////////////////////////////////////////////////
@@ -346,7 +347,15 @@ static void motion(const int x, const int y) {
   }
 
   if (g_mouseClickDown) {
-    g_objectRbt[0] *= m; // Caddywumpus!  FIXME
+    if (manObject == 0) {
+      g_skyRbt *= m;
+    }
+    else if (manObject == 1) {
+      g_objectRbt[0] *= m;
+    }
+    else {
+      g_objectRbt[1] *= m;
+    }
     glutPostRedisplay(); // we always redraw if we changed the scene
   }
 
@@ -372,7 +381,6 @@ static void mouse(const int button, const int state, const int x, const int y) {
 
 
 static void keyboard(const unsigned char key, const int x, const int y) {
-  cout << "Keyboard() called." << endl;
   switch (key) {
   case 27:
     exit(0);                                  // ESC
@@ -400,7 +408,14 @@ static void keyboard(const unsigned char key, const int x, const int y) {
     else {
       currentFrame = 0;
     }
-    cout << "Current Frame: " << currentFrame << endl;
+    break;
+  case 'o':
+    if (manObject < 2) {
+      manObject++;
+    }
+    else {
+      manObject = 0;
+    }
     break;
   }
 

@@ -279,10 +279,32 @@ inline Matrix4 normalMatrix(const Matrix4& m) {
 
 inline Matrix4 transFact(const Matrix4& m) {
   // TODO
+  Matrix4 transMat = Matrix4();
+
+  for (int i = 0; i <= 15; i += 5) {
+    transMat[i] = 1;
+  }
+
+  for (int i = 3; i <= 11; i += 4) {
+    transMat[i] = m[i];
+  }
+
+  return transMat;
 }
 
 inline Matrix4 linFact(const Matrix4& m) {
   // TODO
+  Matrix4 linMat = Matrix4();
+
+  for (int i = 0; i <= 10; i++) {
+    if (i != 3 && i != 7) {
+      linMat[i] = m[i];
+    }
+  }
+
+  linMat[15] = 1;
+
+  return linMat;
 }
 
 #endif
