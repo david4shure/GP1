@@ -351,37 +351,31 @@ static void motion(const int x, const int y) {
   if (g_mouseClickDown) {
     if (manObject == 0) {
       if (currentFrame == 0) {
-	a = linFact(g_skyRbt) * transFact(g_skyRbt);
+	a = transFact(g_skyRbt) * linFact(g_skyRbt);
+	g_skyRbt = a * m * inv(a) * g_skyRbt;
       }
-      else if (currentFrame == 1) {
-	a = linFact(g_objectRbt[0]) * transFact(g_skyRbt);
-      }
-      else {
-	a = linFact(g_objectRbt[1]) * transFact(g_skyRbt);
-      }
-      g_skyRbt = a * m * inv(a) * g_skyRbt;
     }
     else if (manObject == 1) {
       if (currentFrame == 0) {
-	a = linFact(g_skyRbt) * transFact(g_objectRbt[0]);
+	a = transFact(g_objectRbt[0]) * linFact(g_skyRbt);
       }
       else if (currentFrame == 1) {
-	a = linFact(g_objectRbt[0]) * transFact(g_objectRbt[0]);
+	a = transFact(g_objectRbt[0]) * linFact(g_objectRbt[0]);
       }
       else {
-	a = linFact(g_objectRbt[1]) * transFact(g_objectRbt[0]);
+	a = transFact(g_objectRbt[0]) * linFact(g_objectRbt[1]);
       }
       g_objectRbt[0] = a * m * inv(a) * g_objectRbt[0];
     }
     else {
       if (currentFrame == 0) {
-	a = linFact(g_skyRbt) * transFact(g_objectRbt[1]);
+	a = transFact(g_objectRbt[1]) * linFact(g_skyRbt);
       }
       else if (currentFrame == 1) {
-	a = linFact(g_objectRbt[0]) * transFact(g_objectRbt[1]);
+	a = transFact(g_objectRbt[1]) * linFact(g_objectRbt[0]);
       }
       else {
-	a = linFact(g_objectRbt[1]) * transFact(g_objectRbt[1]);
+	a = transFact(g_objectRbt[1]) * linFact(g_objectRbt[1]);
       }
       g_objectRbt[1] = a * m * inv(a) * g_objectRbt[1];
     }
