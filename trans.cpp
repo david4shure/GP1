@@ -346,15 +346,44 @@ static void motion(const int x, const int y) {
     m = Matrix4::makeTranslation(Cvec3(0, 0, -dy) * 0.01);
   }
 
+  Matrix4 a = Matrix4();
+
   if (g_mouseClickDown) {
     if (manObject == 0) {
-      g_skyRbt *= m;
+      if (currentFrame == 0) {
+	a = linFact(g_skyRbt) * transFact(g_skyRbt);
+      }
+      else if (currentFrame == 1) {
+	a = linFact(g_objectRbt[0]) * transFact(g_skyRbt);
+      }
+      else {
+	a = linFact(g_objectRbt[1]) * transFact(g_skyRbt);
+      }
+      g_skyRbt = a * m * inv(a) * g_skyRbt;
     }
     else if (manObject == 1) {
-      g_objectRbt[0] *= m;
+      if (currentFrame == 0) {
+	a = linFact(g_skyRbt) * transFact(g_objectRbt[0]);
+      }
+      else if (currentFrame == 1) {
+	a = linFact(g_objectRbt[0]) * transFact(g_objectRbt[0]);
+      }
+      else {
+	a = linFact(g_objectRbt[1]) * transFact(g_objectRbt[0]);
+      }
+      g_objectRbt[0] = a * m * inv(a) * g_objectRbt[0];
     }
     else {
-      g_objectRbt[1] *= m;
+      if (currentFrame == 0) {
+	a = linFact(g_skyRbt) * transFact(g_objectRbt[1]);
+      }
+      else if (currentFrame == 1) {
+	a = linFact(g_objectRbt[0]) * transFact(g_objectRbt[1]);
+      }
+      else {
+	a = linFact(g_objectRbt[1]) * transFact(g_objectRbt[1]);
+      }
+      g_objectRbt[1] = a * m * inv(a) * g_objectRbt[1];
     }
     glutPostRedisplay(); // we always redraw if we changed the scene
   }
