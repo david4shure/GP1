@@ -198,6 +198,7 @@ static Matrix4 g_objectRbt[2] = {Matrix4::makeTranslation(Cvec3(-1,0,0)), Matrix
 static Cvec3f g_objectColors[1] = {Cvec3f(1, 0, 0)};
 static int currentFrame = 0;
 static int manObject = 1;
+static int skyPerspective = 0;
 
 
 ///////////////// END OF G L O B A L S //////////////////////////////////////////////////
@@ -351,8 +352,14 @@ static void motion(const int x, const int y) {
   if (g_mouseClickDown) {
     if (manObject == 0) {
       if (currentFrame == 0) {
-	a = transFact(g_skyRbt) * linFact(g_skyRbt);
-	g_skyRbt = a * m * inv(a) * g_skyRbt;
+	if (skyPerspective == 0) {
+	  a = transFact(g_skyRbt) * linFact(g_skyRbt);
+	  g_skyRbt = a * m * inv(a) * g_skyRbt;
+	}
+	else {
+	  a = linFact(g_skyRbt);
+	  g_skyRbt = a * m * inv(a) * g_skyRbt;
+	}
       }
     }
     else if (manObject == 1) {
@@ -440,6 +447,13 @@ static void keyboard(const unsigned char key, const int x, const int y) {
       manObject = 0;
     }
     break;
+  case 'm':
+    if (skyPerspective == 0) {
+      skyPerspective = 1;
+    }
+    else {
+      skyPerspective = 0;
+    }
   }
 
   glutPostRedisplay();
